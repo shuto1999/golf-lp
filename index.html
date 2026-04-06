@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ゴルフシミュレーションジム｜データで変わるあなたのスイング</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green-dark:  #062912;
+      --green-mid:   #1a5c2a;
+      --green-light: #27ae60;
+      --gold:        #c8a000;
+      --gold-bright: #f1c40f;
+      --red:         #c0392b;
+      --cream:       #f8f5f0;
+      --white:       #ffffff;
+      --text:        #1a1a1a;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── LAYOUT ─── */
+    section { padding: 72px 20px; }
+    .inner { max-width: 700px; margin: 0 auto; }
+
+    /* ─── SECTION LABEL ─── */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-mid);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+    h2 {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1.4;
+      margin-bottom: 28px;
+    }
+
+    /* ─── WAVE DIVIDER ─── */
+    .wave-divider { width: 100%; overflow: hidden; line-height: 0; display: block; }
+    .wave-divider svg { display: block; width: 100%; }
+
+    /* ══════════════════════════════════════
+       ① FIRSTVIEW
+    ══════════════════════════════════════ */
+    #fv {
+      position: relative;
+      color: #fff;
+      padding: 90px 20px 110px;
+      text-align: center;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+
+    /* background photo */
+    .fv-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        url('https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1400&q=80&fit=crop&crop=center')
+        center center / cover no-repeat;
+      transform: scale(1.05);
+      animation: slow-zoom 20s ease-in-out infinite alternate;
+    }
+    @keyframes slow-zoom {
+      from { transform: scale(1.05); }
+      to   { transform: scale(1.12); }
+    }
+
+    /* gradient overlay */
+    .fv-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(6,41,18,0.88) 0%,
+        rgba(26,92,42,0.75) 50%,
+        rgba(6,41,18,0.85) 100%
+      );
+    }
+
+    /* grid overlay */
+    .fv-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* glow orbs */
+    #fv::before, #fv::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: orb 8s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    #fv::before {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, #27ae60, transparent);
+      top: -120px; left: -100px;
+    }
+    #fv::after {
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, #c8a000, transparent);
+      bottom: -80px; right: -80px;
+      animation-delay: -4s;
+    }
+    @keyframes orb {
+      from { transform: scale(1) translate(0,0); }
+      to   { transform: scale(1.2) translate(30px,20px); }
+    }
+
+    #fv .inner { position: relative; z-index: 2; width: 100%; }
+
+    .fv-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+      color: var(--green-dark);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      padding: 6px 18px;
+      border-radius: 999px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 16px rgba(200,160,0,0.4);
+      animation: pulse-badge 3s ease-in-out infinite;
+    }
+    @keyframes pulse-badge {
+      0%,100% { box-shadow: 0 4px 16px rgba(200,160,0,0.4); }
+      50%      { box-shadow: 0 4px 28px rgba(200,160,0,0.7); }
+    }
+
+    .fv-catch {
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1.45;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.4);
+    }
+    .fv-catch .marker {
+      background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+      color: var(--green-dark);
+      padding: 2px 12px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .fv-subcopy {
+      font-size: 16px;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 36px;
+      line-height: 2;
+    }
+    .fv-subcopy strong { color: var(--gold-bright); font-size: 18px; }
+
+    .fv-benefits {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px;
+      padding: 28px 24px;
+      margin-bottom: 36px;
+      text-align: left;
+      backdrop-filter: blur(10px);
+    }
+    .fv-benefits li {
+      list-style: none;
+      padding: 11px 0;
+      font-size: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .fv-benefits li:last-child { border-bottom: none; }
+    .fv-benefits li .check {
+      width: 24px; height: 24px;
+      background: linear-gradient(135deg, var(--green-light), #1a8c44);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(39,174,96,0.4);
+    }
+
+    /* ─── SCROLL DOWN INDICATOR ─── */
+    .scroll-indicator {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.5;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    .scroll-indicator span { font-size: 11px; letter-spacing: 2px; }
+    .scroll-indicator svg { width: 20px; }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(8px); }
+    }
+
+    /* ─── CTA BUTTON ─── */
+    .cta-btn {
+      position: relative;
+      display: block;
+      background: linear-gradient(135deg, #2ecc71, #27ae60, #1a8c44);
+      background-size: 200% 200%;
+      color: #fff;
+      text-align: center;
+      padding: 22px 28px;
+      border-radius: 12px;
+      font-size: 19px;
+      font-weight: 900;
+      text-decoration: none;
+      box-shadow: 0 8px 28px rgba(39,174,96,0.45), 0 2px 8px rgba(0,0,0,0.2);
+      margin: 28px auto;
+      max-width: 420px;
+      letter-spacing: 1px;
+      overflow: hidden;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.25s ease;
+    }
+    .cta-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -60%;
+      width: 50%; height: 200%;
+      background: rgba(255,255,255,0.18);
+      transform: skewX(-20deg);
+      transition: left 0.5s ease;
+    }
+    .cta-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 16px 40px rgba(39,174,96,0.55), 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .cta-btn:hover::after { left: 120%; }
+    .cta-btn:active { transform: translateY(-1px) scale(0.99); }
+    .cta-sub { text-align: center; font-size: 12px; color: #999; margin-top: -16px; margin-bottom: 16px; }
+
+    /* ══════════════════════════════════════
+       PHOTO STRIP — 共通
+    ══════════════════════════════════════ */
+    .photo-strip {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      line-height: 0;
+    }
+    .photo-strip img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+    .photo-strip:hover img { transform: scale(1.04); }
+    .photo-strip .strip-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(6,41,18,0.3) 0%,
+        rgba(6,41,18,0.0) 40%,
+        rgba(6,41,18,0.0) 60%,
+        rgba(6,41,18,0.35) 100%
+      );
+    }
+    .photo-strip .strip-caption {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.55);
+      color: rgba(255,255,255,0.9);
+      font-size: 12px;
+      letter-spacing: 2px;
+      padding: 5px 16px;
+      border-radius: 999px;
+      white-space: nowrap;
+      backdrop-filter: blur(4px);
+    }
+
+    /* card image */
+    .card-img-wrap {
+      width: 100%;
+      height: 160px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      position: relative;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.5s ease;
+    }
+    .solution-card:hover .card-img-wrap img { transform: scale(1.06); }
+    .card-img-wrap .card-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(6,41,18,0.4), transparent 60%);
+    }
+
+    /* ══════════════════════════════════════
+       ② PAIN
+    ══════════════════════════════════════ */
+    #pain { background: var(--cream); }
+    .pain-list {
+      background: #fff;
+      border-radius: 16px;
+      padding: 8px 20px;
+      margin: 28px 0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      border-left: 5px solid var(--red);
+    }
+    .pain-list li {
+      list-style: none;
+      padding: 14px 0;
+      border-bottom: 1px solid #f5f5f5;
+      font-size: 15px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      color: #333;
+      transition: background 0.2s, padding-left 0.2s;
+      border-radius: 6px;
+      cursor: default;
+    }
+    .pain-list li:last-child { border-bottom: none; }
+    .pain-list li:hover { background: #fff5f5; padding-left: 10px; }
+    .pain-list li .x-icon {
+      width: 22px; height: 22px;
+      background: var(--red);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 900;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .insight-box {
+      background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+      color: #fff;
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      margin-top: 28px;
+      box-shadow: 0 8px 32px rgba(10,46,20,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .insight-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent);
+      pointer-events: none;
+    }
+    .insight-box p {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+      line-height: 1.8;
+      position: relative;
+    }
+    .insight-box .highlight { color: var(--gold-bright); }
+
+    /* ══════════════════════════════════════
+       ③ SOLUTION
+    ══════════════════════════════════════ */
+    #solution { background: #fff; }
+    .solution-card {
+      background: linear-gradient(135deg, #f0f9f4, #e8f5ec);
+      border-radius: 16px;
+      padding: 0 0 24px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(39,174,96,0.12);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.3s ease,
+                  border-color 0.3s ease;
+      cursor: default;
+    }
+    .solution-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 44px rgba(39,174,96,0.2);
+      border-color: rgba(39,174,96,0.4);
+    }
+    .solution-card .card-body { padding: 0 24px; }
+    .solution-card h3 {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      color: var(--green-dark);
+    }
+    .solution-card ul { padding-left: 0; }
+    .solution-card ul li {
+      list-style: none;
+      padding: 8px 0;
+      font-size: 14px;
+      color: #444;
+      border-bottom: 1px dashed #c8e6c9;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .solution-card ul li:last-child { border-bottom: none; }
+    .solution-card ul li::before {
+      content: "▶";
+      color: var(--green-light);
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════
+       ④ PRICE
+    ══════════════════════════════════════ */
+    #price {
+      background: linear-gradient(160deg, var(--green-dark) 0%, #0f3d20 50%, #1a5c2a 100%);
+      color: #fff;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #price::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(39,174,96,0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(200,160,0,0.15) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    #price .inner { position: relative; z-index: 1; }
+    #price h2 { color: #fff; }
+
+    .price-hero {
+      margin: 36px 0;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .price-hero .amount {
+      font-family: 'Oswald', sans-serif;
+      font-size: 100px;
+      font-weight: 700;
+      color: var(--gold-bright);
+      line-height: 1;
+      letter-spacing: -3px;
+      text-shadow: 0 0 40px rgba(241,196,15,0.4);
+    }
+    .price-hero .unit { font-size: 34px; font-weight: 700; color: var(--gold-bright); }
+    .price-hero .label { font-size: 15px; color: rgba(255,255,255,0.7); margin-top: 10px; letter-spacing: 1px; }
+
+    .price-detail {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 28px 0;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s;
+    }
+    .price-detail:hover { background: rgba(255,255,255,0.12); }
+    .price-detail p { color: rgba(255,255,255,0.75); font-size: 14px; margin-bottom: 8px; }
+    .price-formula {
+      background: rgba(0,0,0,0.35);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 10px 0;
+      font-family: 'Oswald', monospace;
+      font-size: 16px;
+      color: var(--gold-bright);
+      text-align: center;
+      border: 1px solid rgba(241,196,15,0.25);
+      letter-spacing: 1px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .price-formula:hover {
+      border-color: rgba(241,196,15,0.6);
+      box-shadow: 0 0 20px rgba(241,196,15,0.15);
+    }
+
+    .compare-wrap { border-radius: 14px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.3); margin: 28px 0; }
+    .compare-table { width: 100%; border-collapse: collapse; }
+    .compare-table th {
+      background: rgba(0,0,0,0.5);
+      color: var(--gold-bright);
+      padding: 12px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .compare-table td {
+      padding: 14px 8px;
+      font-size: 13px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      color: #ddd;
+      transition: background 0.2s;
+    }
+    .compare-table tr:hover td { background: rgba(255,255,255,0.05); }
+    .compare-table tr.highlight-row td {
+      background: rgba(241,196,15,0.12);
+      color: var(--gold-bright);
+      font-weight: 900;
+      font-size: 14px;
+    }
+    .compare-table tr.highlight-row:hover td { background: rgba(241,196,15,0.2); }
+
+    .big-claim {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--gold-bright);
+      margin: 32px 0 10px;
+      line-height: 1.35;
+      text-shadow: 0 0 30px rgba(241,196,15,0.3);
+    }
+    .price-tags { display: flex; flex-direction: column; gap: 14px; margin: 28px 0; }
+    .price-tag {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 16px 18px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                  background 0.25s, border-color 0.25s, box-shadow 0.25s;
+      cursor: default;
+    }
+    .price-tag:hover {
+      transform: translateX(6px);
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(241,196,15,0.4);
+      box-shadow: 0 4px 20px rgba(241,196,15,0.1);
+    }
+    .price-tag .icon { font-size: 24px; flex-shrink: 0; }
+
+    /* ══════════════════════════════════════
+       ⑤ BENEFITS
+    ══════════════════════════════════════ */
+    #benefits { background: var(--cream); }
+    .benefit-grid { display: flex; flex-direction: column; gap: 18px; margin-top: 28px; }
+    .benefit-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px 22px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      border: 2px solid transparent;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.3s ease, border-color 0.3s ease;
+      cursor: default;
+    }
+    .benefit-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 44px rgba(39,174,96,0.18);
+      border-color: var(--green-light);
+    }
+    .benefit-card .icon-wrap {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, #e8f5ec, #c8e6c9);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 10px rgba(39,174,96,0.15);
+    }
+    .benefit-card:hover .icon-wrap { transform: scale(1.12) rotate(-5deg); }
+    .benefit-card h3 { font-size: 18px; font-weight: 900; color: var(--green-dark); margin-bottom: 6px; }
+    .benefit-card p { font-size: 14px; color: #666; margin: 0; }
+
+    /* ── LIFESTYLE PHOTO (benefits 下) ── */
+    .lifestyle-photo {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      margin-top: 40px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+    }
+    .lifestyle-photo img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      object-position: center 30%;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+    .lifestyle-photo:hover img { transform: scale(1.04); }
+    .lifestyle-photo .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(6,41,18,0.7) 0%, transparent 55%);
+    }
+    .lifestyle-photo .overlay-text {
+      position: absolute;
+      bottom: 24px;
+      left: 0; right: 0;
+      text-align: center;
+      color: #fff;
+    }
+    .lifestyle-photo .overlay-text p {
+      font-size: 20px;
+      font-weight: 900;
+      margin: 0;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .lifestyle-photo .overlay-text span {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 2px;
+    }
+
+    /* ══════════════════════════════════════
+       ⑥ FLOW
+    ══════════════════════════════════════ */
+    #flow { background: #fff; }
+    .flow-steps { margin-top: 28px; }
+    .step { display: flex; gap: 18px; align-items: flex-start; margin-bottom: 6px; }
+    .step-num {
+      background: linear-gradient(135deg, var(--green-light), var(--green-mid));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(39,174,96,0.4);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+    }
+    .step:hover .step-num { transform: scale(1.15); box-shadow: 0 6px 20px rgba(39,174,96,0.5); }
+    .step-content {
+      background: linear-gradient(135deg, #f0f9f4, #eaf5ee);
+      border-radius: 12px;
+      padding: 18px 20px;
+      flex: 1;
+      border: 1px solid rgba(39,174,96,0.1);
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .step:hover .step-content { border-color: rgba(39,174,96,0.4); box-shadow: 0 4px 18px rgba(39,174,96,0.1); }
+    .step-content h3 { font-size: 16px; font-weight: 700; color: var(--green-dark); margin-bottom: 4px; }
+    .step-content p { font-size: 13px; color: #666; margin: 0; }
+    .step-arrow { text-align: center; color: var(--green-light); font-size: 20px; margin: 2px 0 2px 22px; opacity: 0.6; }
+
+    /* flow facility photo */
+    .flow-photo {
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 32px 0;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    .flow-photo img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .flow-photo:hover img { transform: scale(1.04); }
+    .flow-photo .photo-tag {
+      position: absolute;
+      top: 14px; left: 14px;
+      background: rgba(6,41,18,0.75);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+    }
+
+    .flow-note {
+      background: linear-gradient(135deg, #f0f9f4, #e8f5ec);
+      border-radius: 14px;
+      padding: 22px;
+      margin-top: 28px;
+      text-align: center;
+      border: 2px dashed rgba(39,174,96,0.3);
+    }
+    .flow-note p { font-size: 15px; color: var(--green-dark); margin: 0; font-weight: 700; }
+
+    /* ══════════════════════════════════════
+       ⑦ OFFER
+    ══════════════════════════════════════ */
+    #offer {
+      background: linear-gradient(160deg, #8b1a12, var(--red) 50%, #d44031);
+      color: #fff;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #offer::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(255,255,255,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 90% 90%, rgba(0,0,0,0.15) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    #offer .inner { position: relative; z-index: 1; }
+    #offer h2 { color: #fff; }
+
+    /* offer photo */
+    .offer-photo {
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      position: relative;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+    .offer-photo img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      object-position: center 20%;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .offer-photo:hover img { transform: scale(1.04); }
+    .offer-photo .photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(139,26,18,0.6) 0%, transparent 60%);
+    }
+    .offer-photo .photo-label {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+
+    .offer-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+      color: #8b1a12;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 8px 20px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 16px rgba(200,160,0,0.5);
+      animation: pulse-badge 3s ease-in-out infinite;
+    }
+    .offer-price {
+      font-family: 'Oswald', sans-serif;
+      font-size: 84px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -2px;
+      margin: 20px 0 10px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .offer-price .currency { font-size: 38px; }
+    .offer-tax { font-size: 14px; color: rgba(255,255,255,0.65); margin-bottom: 28px; }
+    .offer-includes {
+      background: rgba(0,0,0,0.18);
+      border-radius: 14px;
+      padding: 8px 20px;
+      margin: 24px 0;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .offer-includes li {
+      list-style: none;
+      padding: 12px 0;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      transition: padding-left 0.2s;
+      cursor: default;
+    }
+    .offer-includes li:last-child { border-bottom: none; }
+    .offer-includes li:hover { padding-left: 8px; }
+    .offer-includes li .check-icon {
+      width: 22px; height: 22px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; flex-shrink: 0;
+    }
+    .offer-limit {
+      background: rgba(0,0,0,0.25);
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 14px;
+      margin: 20px 0;
+      border: 1px dashed rgba(255,255,255,0.3);
+      line-height: 1.8;
+    }
+    .cta-btn-orange {
+      background: linear-gradient(135deg, #f39c12, #e67e22, #d35400);
+      background-size: 200% 200%;
+      box-shadow: 0 8px 28px rgba(230,126,34,0.55), 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .cta-btn-orange:hover { box-shadow: 0 16px 40px rgba(230,126,34,0.65), 0 4px 12px rgba(0,0,0,0.2); }
+
+    /* ══════════════════════════════════════
+       ⑧ CTA FINAL
+    ══════════════════════════════════════ */
+    #cta-final {
+      background: linear-gradient(160deg, var(--green-dark), #0f3d20);
+      color: #fff;
+      text-align: center;
+      padding: 80px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    #cta-final::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(39,174,96,0.15), transparent 70%);
+      pointer-events: none;
+    }
+    #cta-final .inner { position: relative; z-index: 1; }
+    #cta-final h2 { color: #fff; font-size: 30px; }
+    #cta-final p { color: rgba(255,255,255,0.75); font-size: 15px; }
+    .cta-checks { display: flex; flex-direction: column; gap: 12px; margin: 28px auto; text-align: left; max-width: 280px; }
+    .cta-checks li {
+      list-style: none;
+      font-size: 15px;
+      color: rgba(255,255,255,0.85);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .cta-checks li .check {
+      width: 22px; height: 22px;
+      background: var(--green-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; flex-shrink: 0;
+    }
+    .closing-quote {
+      margin-top: 48px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      font-style: italic;
+      line-height: 2;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px;
+    }
+
+    /* ═══ HEADER NAV ═══ */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 24px;
+      background: rgba(6,41,18,0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(200,168,75,0.2);
+    }
+    .site-header .logo img {
+      height: 36px;
+      width: auto;
+      display: block;
+      filter: brightness(1);
+    }
+    .site-header .header-cta {
+      font-size: 12px;
+      color: #c8a84b;
+      text-decoration: none;
+      border: 1px solid #c8a84b;
+      border-radius: 20px;
+      padding: 6px 16px;
+      transition: all 0.3s;
+    }
+    .site-header .header-cta:hover {
+      background: #c8a84b;
+      color: #062912;
+    }
+    #fv { padding-top: 60px; }
+
+    /* ═══ FOOTER ═══ */
+    footer { background: #0a0a0a; color: #666; text-align: center; padding: 36px 20px; }
+    footer .footer-logo { margin-bottom: 16px; }
+    footer .footer-logo img { height: 40px; width: auto; opacity: 0.85; filter: grayscale(20%); }
+    footer p { margin: 5px 0; font-size: 12px; color: #666; }
+    footer .footer-divider { width: 40px; height: 2px; background: var(--green-mid); margin: 16px auto; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <a href="https://a-fit.life" target="_blank" rel="noopener" class="logo">
+    <img src="images/a-fit-logo.jpg" alt="a-fit ロゴ">
+  </a>
+  <a href="https://lin.ee/SkazHAl" target="_blank" rel="noopener" class="header-cta">📲 体験予約</a>
+</header>
+
+<!-- ① FIRSTVIEW -->
+<section id="fv">
+  <div class="fv-bg"></div>
+  <div class="fv-overlay"></div>
+  <div class="fv-grid"></div>
+  <div class="inner">
+    <div class="fv-tag reveal">✦ ゴルフシミュレーションジム</div>
+    <h1 class="fv-catch reveal reveal-delay-1">
+      スコアが伸びない<br>
+      <span class="marker">本当の理由</span>、<br>
+      知っていますか？
+    </h1>
+    <p class="fv-subcopy reveal reveal-delay-2">
+      あなたのスイングが悪いのではなく、<br>
+      <strong>体の使い方が間違っているだけです。</strong><br>
+      データが、あなたのゴルフを変える。
+    </p>
+    <ul class="fv-benefits reveal reveal-delay-3">
+      <li><span class="check">✓</span>ヘッドスピード・ミート率をその場で数値化</li>
+      <li><span class="check">✓</span>スイング動画でフォームをリアルタイムチェック</li>
+      <li><span class="check">✓</span>トレーナーが「体の使い方」から根本改善</li>
+    </ul>
+    <a href="https://lin.ee/SkazHAl" target="_blank" rel="noopener" class="cta-btn reveal reveal-delay-4">📲 LINEで今すぐ体験予約</a>
+    <p class="cta-sub">無理な勧誘は一切ありません</p>
+    <div class="scroll-indicator">
+      <span>SCROLL</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </div>
+</section>
+
+<div class="wave-divider">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,20 C360,40 1080,0 1440,20 L1440,40 L0,40 Z" fill="#f8f5f0"/>
+  </svg>
+</div>
+
+<!-- ② PAIN -->
+<section id="pain">
+  <div class="inner">
+    <p class="section-label reveal">あなたの悩み</p>
+    <h2 class="reveal reveal-delay-1">練習しているのに、<br>なぜ上手くならない？</h2>
+    <ul class="pain-list reveal reveal-delay-2">
+      <li><span class="x-icon">✕</span>打ちっぱなしに通っても、スコアが変わらない</li>
+      <li><span class="x-icon">✕</span>何が悪いのかわからないまま、同じミスを繰り返す</li>
+      <li><span class="x-icon">✕</span>飛距離が落ちてきた気がする…</li>
+      <li><span class="x-icon">✕</span>若い頃と同じ感覚でやっているのに、体がついてこない</li>
+    </ul>
+    <div class="insight-box reveal reveal-delay-3">
+      <p>
+        その悩み、<br>
+        <span class="highlight">「練習量」の問題ではありません。</span><br><br>
+        正しい「体の使い方」を知らないまま<br>
+        打ち続けても、上達は望めないのです。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO STRIP (pain → solution) -->
+<div class="photo-strip reveal">
+  <img
+    src="images/data-analytics.png"
+    alt="スイングデータ分析"
+    loading="lazy"
+  >
+  <div class="strip-overlay"></div>
+  <span class="strip-caption">あなたのスイング、データで解明します</span>
+</div>
+
+<div class="wave-divider" style="background:#f8f5f0;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,20 C360,0 1080,40 1440,20 L1440,40 L0,40 Z" fill="#fff"/>
+  </svg>
+</div>
+
+<!-- ③ SOLUTION -->
+<section id="solution">
+  <div class="inner">
+    <p class="section-label reveal">解決策</p>
+    <h2 class="reveal reveal-delay-1">なぜ、このジムで<br>変わるのか？</h2>
+
+    <div class="solution-card reveal reveal-delay-1">
+      <div class="card-img-wrap" style="height:auto;">
+        <img
+          src="images/simulator-data.png"
+          alt="ゴルフシミュレーターデータ分析"
+          loading="lazy"
+          style="height:auto;object-fit:contain;object-position:center;"
+        >
+        <div class="card-img-overlay"></div>
+      </div>
+      <div class="card-body">
+        <h3>📊 数字で「原因」がわかる</h3>
+        <p style="font-size:14px;color:#555;margin-bottom:14px;">シミュレーションゴルフで、スイングのすべてを計測。「なんとなく」から「根拠のある改善」へ。</p>
+        <ul>
+          <li>ヘッドスピード</li>
+          <li>ミート率</li>
+          <li>打ち出し角度</li>
+          <li>スピン量</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="solution-card reveal reveal-delay-2">
+      <div class="card-img-wrap" style="height:auto;">
+        <img
+          src="images/swing-simulator.png"
+          alt="ゴルフシミュレーター スイング動画"
+          loading="lazy"
+          style="height:auto;object-fit:contain;object-position:center;"
+        >
+        <div class="card-img-overlay"></div>
+      </div>
+      <div class="card-body">
+        <h3>🎥 動画で「フォーム」が見える</h3>
+        <p style="font-size:14px;color:#555;margin-bottom:0;">その場でスイングを録画・確認。自分のクセに、初めて気づく人がほとんどです。</p>
+      </div>
+    </div>
+
+    <div class="solution-card reveal reveal-delay-3">
+      <div class="card-img-wrap" style="height:auto;">
+        <img
+          src="images/trainer-body.png"
+          alt="トレーナーによる体のケア"
+          loading="lazy"
+          style="height:auto;object-fit:contain;object-position:center;"
+        >
+        <div class="card-img-overlay"></div>
+      </div>
+      <div class="card-body">
+        <h3>🏋️ トレーナーが「体」から変える</h3>
+        <p style="font-size:14px;color:#555;margin-bottom:0;">柔軟性・可動域のチェックで、あなたの体の「使えていない部分」を特定。ストレッチ・トレーニングで、スイングの土台そのものを改善します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wave-divider">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,10 C480,40 960,0 1440,30 L1440,40 L0,40 Z" fill="#062912"/>
+  </svg>
+</div>
+
+<!-- ④ PRICE -->
+<section id="price">
+  <div class="inner">
+    <p class="section-label reveal" style="background:rgba(241,196,15,0.15);color:#f1c40f;border:1px solid rgba(241,196,15,0.3);">料金のひみつ</p>
+    <h2 class="reveal reveal-delay-1">1回たった<br>「220円」で、<br>データ分析×プロ指導が<br>受けられる。</h2>
+
+    <div class="price-hero reveal reveal-delay-2">
+      <div class="amount" id="price-counter">220<span class="unit">円</span></div>
+      <div class="label">1回あたりのシミュレーション利用料</div>
+    </div>
+
+    <div class="price-detail reveal reveal-delay-2">
+      <p>＋月2,200円でシミュレーションゴルフ</p>
+      <p style="font-size:18px;font-weight:700;color:#fff;margin-bottom:12px;"><strong>20分 × 10回分（計200分）</strong> が使える</p>
+      <div class="price-formula">2,200円 ÷ 10回 ＝ 1回あたり 約220円</div>
+      <div class="price-formula">220円 ÷ 20分 ＝ 1分あたり 約11円</div>
+    </div>
+
+    <p class="reveal" style="color:rgba(255,255,255,0.7);font-size:15px;margin:28px 0 12px;">他のゴルフ練習と比べてみてください</p>
+    <div class="compare-wrap reveal reveal-delay-1">
+      <table class="compare-table">
+        <thead>
+          <tr><th>練習方法</th><th>料金</th><th>分析</th><th>指導</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>打ちっぱなし1回</td><td>〜3,000円</td><td>なし</td><td>なし</td>
+          </tr>
+          <tr>
+            <td>レッスン1回</td><td>〜10,000円</td><td>場合による</td><td>あり</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>当ジム（1回）</td><td>約220円</td><td>✓ あり</td><td>✓ あり</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="reveal" style="color:rgba(255,255,255,0.85);font-size:16px;font-weight:700;margin:28px 0 10px;">
+      打ちっぱなし1回分以下の料金で、<br>10回分使える。
+    </p>
+    <div class="big-claim reveal reveal-delay-1">これは「安い」のではない。<br>異常にお得、です。</div>
+
+    <div class="price-tags reveal reveal-delay-2">
+      <div class="price-tag">
+        <span class="icon">📅</span>
+        <span><strong style="color:var(--gold-bright);">通うほどお得</strong>な定額制。毎週行っても月7,480円。</span>
+      </div>
+      <div class="price-tag">
+        <span class="icon">🎯</span>
+        <span><strong style="color:var(--gold-bright);">無駄なく使える回数制。</strong>使った分だけ消化。</span>
+      </div>
+      <div class="price-tag">
+        <span class="icon">🏢</span>
+        <span>ジム会費（月5,280円）で施設は<strong style="color:var(--gold-bright);">通い放題。</strong></span>
+      </div>
+    </div>
+
+    <a href="https://lin.ee/SkazHAl" target="_blank" rel="noopener" class="cta-btn reveal reveal-delay-3">📲 体験予約はこちら（LINEで簡単）</a>
+    <p class="cta-sub" style="color:rgba(255,255,255,0.4);">無理な勧誘は一切ありません</p>
+  </div>
+</section>
+
+<div class="wave-divider" style="background:#062912;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,30 C480,0 960,40 1440,10 L1440,40 L0,40 Z" fill="#f8f5f0"/>
+  </svg>
+</div>
+
+<!-- ⑤ BENEFITS -->
+<section id="benefits">
+  <div class="inner">
+    <p class="section-label reveal">3ヶ月後の変化</p>
+    <h2 class="reveal reveal-delay-1">あなたに起きる<br>4つの変化</h2>
+    <div class="benefit-grid">
+      <div class="benefit-card reveal reveal-delay-1">
+        <div class="icon-wrap">🏌️</div>
+        <div>
+          <h3>飛距離が伸びる</h3>
+          <p>体の使い方が変わると、力まなくても飛ぶようになる。</p>
+        </div>
+      </div>
+      <div class="benefit-card reveal reveal-delay-2">
+        <div class="icon-wrap">⛳</div>
+        <div>
+          <h3>ミスが減る</h3>
+          <p>原因がわかれば、同じミスを繰り返さなくなる。</p>
+        </div>
+      </div>
+      <div class="benefit-card reveal reveal-delay-3">
+        <div class="icon-wrap">📉</div>
+        <div>
+          <h3>スコアが安定する</h3>
+          <p>再現性のあるスイングが身につく。</p>
+        </div>
+      </div>
+      <div class="benefit-card reveal reveal-delay-4">
+        <div class="icon-wrap">😄</div>
+        <div>
+          <h3>ゴルフがもっと楽しくなる</h3>
+          <p>「なんとなく」から「確信を持って打てる」快感へ。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ライフスタイル写真 -->
+    <div class="lifestyle-photo reveal">
+      <img
+        src="images/golf-lifestyle.png"
+        alt="ゴルフコース"
+        loading="lazy"
+      >
+      <div class="overlay"></div>
+      <div class="overlay-text">
+        <p>あなたのゴルフが、生まれ変わる。</p>
+        <span>DATA × BODY × TRAINING</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wave-divider" style="background:#f8f5f0;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,20 C360,40 1080,0 1440,20 L1440,40 L0,40 Z" fill="#fff"/>
+  </svg>
+</div>
+
+<!-- ⑥ FLOW -->
+<section id="flow">
+  <div class="inner">
+    <p class="section-label reveal">体験の流れ</p>
+    <h2 class="reveal reveal-delay-1">はじめてでも安心。<br>5ステップで完結。</h2>
+
+
+    <div class="flow-steps">
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>LINEで予約</h3>
+          <p>希望日時を送るだけ。簡単30秒。</p>
+        </div>
+      </div>
+      <div class="step-arrow">↓</div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>ヒアリング（約5分）</h3>
+          <p>今の悩みや目標をざっくりお聞きします。</p>
+        </div>
+      </div>
+      <div class="step-arrow">↓</div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>シミュレーション体験（約20分）</h3>
+          <p>実際に打ちながらデータを計測。</p>
+        </div>
+      </div>
+      <div class="step-arrow">↓</div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>フォームチェック・体の分析（約15分）</h3>
+          <p>動画とデータをもとに、トレーナーが解説。</p>
+        </div>
+      </div>
+      <div class="step-arrow">↓</div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>改善プランのご提案</h3>
+          <p>あなた専用の練習・トレーニング方針をご説明。</p>
+        </div>
+      </div>
+    </div>
+    <div class="flow-note reveal reveal-delay-4">
+      <p>🙌 無理な勧誘は一切ありません。<br>体験当日に入会するかどうかをお決めください。</p>
+    </div>
+  </div>
+</section>
+
+<div class="wave-divider">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,10 C480,40 960,0 1440,30 L1440,40 L0,40 Z" fill="#8b1a12"/>
+  </svg>
+</div>
+
+<!-- ⑦ OFFER -->
+<section id="offer">
+  <div class="inner">
+    <!-- 施設・信頼写真 -->
+    <div class="offer-photo reveal">
+      <img
+        src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=800&q=80&fit=crop&crop=top"
+        alt="ゴルフ体験オファー"
+        loading="lazy"
+        onerror="this.src='https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800&q=80&fit=crop'"
+      >
+      <div class="photo-overlay"></div>
+      <span class="photo-label">✦ トレーナーによる個別指導</span>
+    </div>
+
+    <span class="offer-badge reveal">⚠️ 期間限定・月4名様限定</span>
+    <p class="section-label reveal reveal-delay-1" style="background:rgba(255,255,255,0.15);color:#fff;">初回体験 特別価格</p>
+    <h2 class="reveal reveal-delay-1">今だけのお得な<br>体験オファー</h2>
+    <div class="offer-price reveal reveal-delay-2">
+      <span class="currency">¥</span>3,000
+    </div>
+    <p class="offer-tax reveal">（税込）</p>
+    <ul class="offer-includes reveal reveal-delay-2">
+      <li><span class="check-icon">✓</span>シミュレーションゴルフ体験</li>
+      <li><span class="check-icon">✓</span>スイングデータ分析レポート</li>
+      <li><span class="check-icon">✓</span>フォームチェック動画プレゼント</li>
+      <li><span class="check-icon">✓</span>体の柔軟性・可動域チェック</li>
+      <li><span class="check-icon">✓</span>トレーナーによる個別アドバイス</li>
+    </ul>
+    <div class="offer-limit reveal reveal-delay-3">
+      ⚠️ このページからご予約の方限定。<br>
+      月4名様まで・先着順のため、お早めにどうぞ。
+    </div>
+    <a href="https://lin.ee/SkazHAl" target="_blank" rel="noopener" class="cta-btn cta-btn-orange reveal reveal-delay-3">
+      📲 LINEで体験予約する（¥3,000）
+    </a>
+    <p class="cta-sub" style="color:rgba(255,255,255,0.5);">予約は30秒・無理な勧誘なし</p>
+  </div>
+</section>
+
+<div class="wave-divider" style="background:#8b1a12;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,30 C480,0 960,40 1440,10 L1440,40 L0,40 Z" fill="#062912"/>
+  </svg>
+</div>
+
+<!-- ⑧ CTA FINAL -->
+<section id="cta-final">
+  <div class="inner">
+    <h2 class="reveal">あなたのゴルフ、<br>数字で変えましょう。</h2>
+    <p class="reveal reveal-delay-1" style="margin-top:16px;">
+      「やってみようかな」と思ったなら、<br>
+      そのタイミングが、変わるチャンスです。
+    </p>
+    <ul class="cta-checks reveal reveal-delay-2">
+      <li><span class="check">✓</span>予約は30秒</li>
+      <li><span class="check">✓</span>無理な勧誘なし</li>
+      <li><span class="check">✓</span>まず体験だけでもOK</li>
+    </ul>
+    <a href="https://lin.ee/SkazHAl" target="_blank" rel="noopener" class="cta-btn reveal reveal-delay-3" style="font-size:18px;">
+      📲 今すぐLINEで体験予約
+    </a>
+    <p class="cta-sub reveal" style="color:rgba(255,255,255,0.35);">初回体験 ¥3,000（税込）/ 月4名様限定</p>
+    <p class="closing-quote reveal reveal-delay-4">
+      「打ちっぱなしに通うのをやめて、<br>正解を知りたかった」<br>
+      ——そう思った瞬間が、スタートです。
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">
+    <img src="images/a-fit-logo.jpg" alt="a-fit ロゴ">
+  </div>
+  <div class="footer-divider"></div>
+  <p>営業時間：10:00〜23:00</p>
+  <p>所在地：静岡県駿東郡清水町玉川61-2 2階</p>
+  <p>お電話：055-957-1155</p>
+  <p>公式HP：<a href="https://a-fit.life" target="_blank" rel="noopener" style="color:#c8a84b;text-decoration:none;">https://a-fit.life</a></p>
+  <p>公式LINE：<a href="https://lin.ee/SkazHAl" target="_blank" rel="noopener" style="color:#c8a84b;text-decoration:none;">友だち追加はこちら</a></p>
+  <div class="footer-divider"></div>
+  <p>© 2026 ゴルフシミュレーションジム All Rights Reserved.</p>
+</footer>
+
+<script>
+  /* ─── Scroll Reveal ─── */
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+
+  /* ─── Price Counter ─── */
+  function animateCounter(el, target, duration) {
+    const start = performance.now();
+    const update = (time) => {
+      const progress = Math.min((time - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.innerHTML = Math.round(eased * target) + '<span class="unit">円</span>';
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+  const priceEl = document.getElementById('price-counter');
+  new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(priceEl, 220, 1200);
+        entry.target._obs?.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 }).observe(priceEl);
+</script>
+</body>
+</html>
