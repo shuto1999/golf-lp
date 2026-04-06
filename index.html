@@ -956,6 +956,21 @@
     footer .footer-logo img { height: 40px; width: auto; opacity: 0.85; filter: grayscale(20%); }
     footer p { margin: 5px 0; font-size: 12px; color: #666; }
     footer .footer-divider { width: 40px; height: 2px; background: var(--green-mid); margin: 16px auto; }
+
+    /* ═══ MOBILE WRAP FIX ═══ */
+    @media (max-width: 430px) {
+      .fv-benefits li { font-size: 13px; }
+      .pain-list { padding: 8px 10px; }
+      .pain-list li { font-size: 12px; gap: 8px; }
+      .price-tag span { font-size: 13px; }
+      .price-tag { gap: 10px; }
+      #price h2 { font-size: 26px; }
+      .solution-card .card-body p { font-size: 13px; }
+      .pain-message p { font-size: 15px; }
+      .step-content h3 { font-size: 15px; }
+      .offer-includes li { font-size: 14px; }
+      .cta-checks li { font-size: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -986,9 +1001,9 @@
       データが、あなたのゴルフを変える。
     </p>
     <ul class="fv-benefits reveal reveal-delay-3">
-      <li><span class="check">✓</span>ヘッドスピード・ミート率をその場で数値化</li>
-      <li><span class="check">✓</span>スイング動画でフォームをリアルタイムチェック</li>
-      <li><span class="check">✓</span>トレーナーが「体の使い方」から根本改善</li>
+      <li><span class="check">✓</span><span style="white-space:nowrap;">ヘッドスピード・ミート率をその場で数値化</span></li>
+      <li><span class="check">✓</span><span style="white-space:nowrap;">スイング動画でフォームをリアルタイムチェック</span></li>
+      <li><span class="check">✓</span><span style="white-space:nowrap;">トレーナーが「体の使い方」から根本改善</span></li>
     </ul>
     <a href="https://lin.ee/SkazHAl" target="_blank" rel="noopener" class="cta-btn reveal reveal-delay-4">📲 LINEで今すぐ体験予約</a>
     <p class="cta-sub">無理な勧誘は一切ありません</p>
@@ -1014,7 +1029,7 @@
       <li><span class="x-icon">✕</span>打ちっぱなしに通っても、スコアが変わらない</li>
       <li><span class="x-icon">✕</span>何が悪いのかわからないまま、同じミスを繰り返す</li>
       <li><span class="x-icon">✕</span>飛距離が落ちてきた気がする…</li>
-      <li><span class="x-icon">✕</span>若い頃と同じ感覚でやっているのに、体がついてこない</li>
+      <li><span class="x-icon">✕</span>若い頃と同じ感覚なのに、体がついてこない</li>
     </ul>
     <div class="insight-box reveal reveal-delay-3">
       <p>
@@ -1158,7 +1173,7 @@
     <div class="price-tags reveal reveal-delay-2">
       <div class="price-tag">
         <span class="icon">📅</span>
-        <span><strong style="color:var(--gold-bright);">通うほどお得</strong>な定額制。毎週行っても月7,480円。</span>
+        <span><strong style="color:var(--gold-bright);">通うほどお得</strong>な定額制。<span style="white-space:nowrap;">毎週行っても月7,480円。</span></span>
       </div>
       <div class="price-tag">
         <span class="icon">🎯</span>
