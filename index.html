@@ -522,6 +522,7 @@
       border: 1px solid rgba(241,196,15,0.25);
       letter-spacing: 1px;
       transition: border-color 0.3s, box-shadow 0.3s;
+      white-space: nowrap;
     }
     .price-formula:hover {
       border-color: rgba(241,196,15,0.6);
@@ -556,12 +557,14 @@
     .compare-table tr.highlight-row:hover td { background: rgba(241,196,15,0.2); }
 
     .big-claim {
-      font-size: 30px;
+      font-size: 26px;
       font-weight: 900;
       color: var(--gold-bright);
       margin: 32px 0 10px;
-      line-height: 1.35;
+      line-height: 1.5;
       text-shadow: 0 0 30px rgba(241,196,15,0.3);
+      word-break: keep-all;
+      overflow-wrap: normal;
     }
     .price-tags { display: flex; flex-direction: column; gap: 14px; margin: 28px 0; }
     .price-tag {
@@ -1169,7 +1172,7 @@
       </div>
     </div>
 
-    <a href="https://lin.ee/SkazHAl" target="_blank" rel="noopener" class="cta-btn reveal reveal-delay-3">📲 体験予約はこちら（LINEで簡単）</a>
+    <a href="https://lin.ee/SkazHAl" target="_blank" rel="noopener" class="cta-btn reveal reveal-delay-3">📲 体験予約はこちら<br>（LINEで簡単）</a>
     <p class="cta-sub" style="color:rgba(255,255,255,0.4);">無理な勧誘は一切ありません</p>
   </div>
 </section>
