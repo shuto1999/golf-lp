@@ -950,6 +950,28 @@
     }
     #fv { padding-top: 60px; }
 
+    /* ═══ PLANS ═══ */
+    #plans { background: #f4f8f5; padding: 60px 0; }
+    #plans h2 { color: var(--green-dark); }
+    #plans .section-label { background: rgba(39,174,96,0.1); color: var(--green-mid); border: 1px solid rgba(39,174,96,0.25); }
+    .plans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+    .plan-card { background: #fff; border-radius: 16px; padding: 24px 18px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+    .plan-member { border: 2px solid var(--green-mid); }
+    .plan-nonmember { border: 2px solid #ddd; }
+    .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--green-mid); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; white-space: nowrap; }
+    .plan-head { text-align: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #eee; }
+    .plan-title { font-size: 15px; font-weight: 800; color: var(--green-dark); margin: 0 0 4px; }
+    .plan-sub { font-size: 10px; color: #999; margin: 0; line-height: 1.4; }
+    .plan-row { text-align: center; padding: 10px 0; }
+    .plan-row-label { font-size: 11px; color: #888; font-weight: 600; letter-spacing: 0.05em; margin: 0 0 4px; text-transform: uppercase; }
+    .plan-row-price { margin: 0 0 4px; }
+    .plan-price-num { font-size: 28px; font-weight: 900; color: var(--green-dark); letter-spacing: -0.03em; }
+    .plan-price-unit { font-size: 12px; color: #666; font-weight: 600; }
+    .plan-none { font-size: 24px; color: #ccc; font-weight: 700; margin: 0 0 4px; }
+    .plan-row-desc { font-size: 11px; color: #777; margin: 0; line-height: 1.5; }
+    .plan-divider { height: 1px; background: #eee; margin: 12px 0; }
+    .plans-note { font-size: 12px; color: #aaa; text-align: center; margin-top: 20px; }
+
     /* ═══ FOOTER ═══ */
     footer { background: #0a0a0a; color: #666; text-align: center; padding: 36px 20px; }
     footer .footer-logo { margin-bottom: 16px; }
@@ -1194,11 +1216,76 @@
 
 <div class="wave-divider" style="background:#062912;">
   <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-    <path d="M0,30 C480,0 960,40 1440,10 L1440,40 L0,40 Z" fill="#f8f5f0"/>
+    <path d="M0,30 C480,0 960,40 1440,10 L1440,40 L0,40 Z" fill="#f4f8f5"/>
   </svg>
 </div>
 
-<!-- ⑤ BENEFITS -->
+<!-- ⑤ PLANS -->
+<section id="plans">
+  <div class="inner">
+    <p class="section-label reveal">料金プラン</p>
+    <h2 class="reveal reveal-delay-1">シンプルな<br>料金体系</h2>
+
+    <div class="plans-grid reveal reveal-delay-2">
+
+      <!-- 会員 -->
+      <div class="plan-card plan-member">
+        <div class="plan-badge">おすすめ</div>
+        <div class="plan-head">
+          <p class="plan-title">ジム会員様</p>
+          <p class="plan-sub">ジム月会費（別途）が必要です</p>
+        </div>
+
+        <div class="plan-row">
+          <p class="plan-row-label">月額チケット</p>
+          <p class="plan-row-price"><span class="plan-price-num">2,200</span><span class="plan-price-unit">円/月</span></p>
+          <p class="plan-row-desc">20分 × 10回券<br><span style="font-size:11px;color:#888;">（1日最大3枚まで使用可）</span></p>
+        </div>
+
+        <div class="plan-divider"></div>
+
+        <div class="plan-row">
+          <p class="plan-row-label">都度利用</p>
+          <p class="plan-row-price"><span class="plan-price-num">500</span><span class="plan-price-unit">円/20分</span></p>
+          <p class="plan-row-desc">チケット未使用時の単発利用</p>
+        </div>
+      </div>
+
+      <!-- 非会員 -->
+      <div class="plan-card plan-nonmember">
+        <div class="plan-head">
+          <p class="plan-title">非会員様</p>
+          <p class="plan-sub">ジム入会不要・手ぶらでOK</p>
+        </div>
+
+        <div class="plan-row">
+          <p class="plan-row-label">月額プラン</p>
+          <p class="plan-row-price plan-none">－</p>
+          <p class="plan-row-desc" style="color:#aaa;">月額プランはありません</p>
+        </div>
+
+        <div class="plan-divider"></div>
+
+        <div class="plan-row">
+          <p class="plan-row-label">都度利用</p>
+          <p class="plan-row-price"><span class="plan-price-num">1,100</span><span class="plan-price-unit">円/1時間</span></p>
+          <p class="plan-row-desc">予約不要・いつでも利用可</p>
+        </div>
+      </div>
+
+    </div><!-- /.plans-grid -->
+
+    <p class="plans-note reveal reveal-delay-3">※ ジム月会費については、スタッフまでお問い合わせください。</p>
+  </div>
+</section>
+
+<div class="wave-divider" style="background:#f4f8f5;">
+  <svg viewBox="0 0 1440 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,10 C480,40 960,0 1440,30 L1440,40 L0,40 Z" fill="#f8f5f0"/>
+  </svg>
+</div>
+
+<!-- ⑥ BENEFITS -->
 <section id="benefits">
   <div class="inner">
     <p class="section-label reveal">3ヶ月後の変化</p>
